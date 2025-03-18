@@ -168,92 +168,28 @@
     </div>
 
     <script>
-      // Array to store image information
-      let slides = [];
+      // !! IMPORTANT !!
+      // You need to manually list your images here
+      // Add or remove entries as needed for your bag colors
+      const imageList = [
+        { path: "images/ash-rose.webp", colorName: "Ash Rose" },
+        { path: "images/brindle-quilted.webp", colorName: "Brindle Quilted" },
+        { path: "images/floral-tapestry.webp", colorName: "Floral Tapestry" },
+        { path: "images/iceberg-green.webp", colorName: "Iceberg Green" },
+        { path: "images/lilas.webp", colorName: "Lilas" },
+        { path: "images/moonbeam.webp", colorName: "Moonbeam" },
+        { path: "images/nova-black.webp", colorName: "Nova Black" },
+        { path: "images/orion-blue.webp", colorName: "Orion Blue" },
+        {
+          path: "images/oxblood-red-quilted.webp",
+          colorName: "Oxblood Red Quilted",
+        },
+        { path: "images/retreat-black.webp", colorName: "Retreat Black" },
+      ];
+
       let currentSlideIndex = 0;
 
-      // Function to extract color name from filename
-      function extractColorName(filename) {
-        // Remove file extension and path
-        const name = filename.split("/").pop().split(".")[0];
-
-        // Replace hyphens or underscores with spaces and capitalize each word
-        return name
-          .replace(/[-_]/g, " ")
-          .split(" ")
-          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-          .join(" ");
-      }
-
-      // Function to load all images from the 'images' directory
-      function loadImages() {
-        // Fetch the list of files in the 'images' directory
-        fetch("images/")
-          .then((response) => {
-            if (!response.ok) {
-              throw new Error("Could not access the images directory");
-            }
-            return response.text();
-          })
-          .then((html) => {
-            // Parse the HTML response to extract image filenames
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(html, "text/html");
-            const links = Array.from(doc.querySelectorAll("a"));
-
-            // Filter for image files
-            const imageExtensions = [".jpg", ".jpeg", ".png", ".gif", ".webp"];
-            const imageFiles = links
-              .map((link) => link.getAttribute("href"))
-              .filter((href) => {
-                if (!href) return false;
-                return imageExtensions.some((ext) =>
-                  href.toLowerCase().endsWith(ext)
-                );
-              });
-
-            // Create slide objects
-            slides = imageFiles.map((filename, index) => {
-              return {
-                path: "images/" + filename,
-                colorName: extractColorName(filename),
-              };
-            });
-
-            // Initialize the carousel if images were found
-            if (slides.length > 0) {
-              initializeCarousel();
-            } else {
-              displayErrorMessage(
-                "No image files found in the 'images' directory"
-              );
-            }
-          })
-          .catch((error) => {
-            console.error("Error loading images:", error);
-            handleImageLoadingFallback();
-          });
-      }
-
-      // Fallback function for local testing where directory listing might not work
-      function handleImageLoadingFallback() {
-        // Try to load some sample images or use a different approach
-        const carouselInner = document.getElementById("carousel-inner");
-        carouselInner.innerHTML = `
-                <div class="carousel-item active">
-                    <p style="text-align: center; padding: 20px;">
-                        Unable to automatically load images from the 'images' directory.<br><br>
-                        To use this carousel:<br>
-                        1. Make sure you have an 'images' folder in the same directory as this HTML file<br>
-                        2. Place your bag color images in that folder<br>
-                        3. Name your files with the color name (e.g., "red-leather.jpg", "navy-blue.png")<br>
-                        4. Serve this page from a web server rather than opening it directly
-                    </p>
-                </div>
-            `;
-      }
-
-      // Function to initialize the carousel with the loaded images
+      // Function to initialize the carousel with the predefined images
       function initializeCarousel() {
         const carouselInner = document.getElementById("carousel-inner");
         const carouselIndicators = document.getElementById(
@@ -266,19 +202,23 @@
         carouselIndicators.innerHTML = "";
 
         // Create carousel items and indicators
-        slides.forEach((slide, index) => {
+        imageList.forEach((image, index) => {
           // Create carousel item
           const item = document.createElement("div");
           item.className = `carousel-item ${index === 0 ? "active" : ""}`;
 
           const img = document.createElement("img");
-          img.src = slide.path;
-          img.alt = slide.colorName;
-          img.onload = () => {
-            // Once the first image is loaded, set the color name
-            if (index === 0) {
-              colorNameElement.textContent = slide.colorName;
-            }
+          img.src = image.path;
+          img.alt = image.colorName;
+          img.onerror = () => {
+            // If image fails to load, replace with error message
+            item.innerHTML = `
+                        <div style="padding: 20px; text-align: center;">
+                            <p>Could not load image: ${image.path}</p>
+                            <p>Make sure the image exists and the path is correct.</p>
+                            <p>Color: ${image.colorName}</p>
+                        </div>
+                    `;
           };
 
           item.appendChild(img);
@@ -296,25 +236,13 @@
         updateColorName();
       }
 
-      // Display error message
-      function displayErrorMessage(message) {
-        const carouselInner = document.getElementById("carousel-inner");
-        carouselInner.innerHTML = `
-                <div class="carousel-item active">
-                    <p style="text-align: center; padding: 20px; color: #d9534f;">
-                        ${message}
-                    </p>
-                </div>
-            `;
-      }
-
       // Function to go to a specific slide
       function goToSlide(index) {
-        if (slides.length === 0) return;
-
         // Hide the current slide
         const items = document.querySelectorAll(".carousel-item");
         const indicators = document.querySelectorAll(".indicator");
+
+        if (items.length === 0) return;
 
         // Remove active class from current slide and indicator
         items[currentSlideIndex].classList.remove("active");
@@ -324,10 +252,10 @@
         currentSlideIndex = index;
 
         // Wrap around if needed
-        if (currentSlideIndex >= slides.length) {
+        if (currentSlideIndex >= items.length) {
           currentSlideIndex = 0;
         } else if (currentSlideIndex < 0) {
-          currentSlideIndex = slides.length - 1;
+          currentSlideIndex = items.length - 1;
         }
 
         // Show the new slide and update indicator
@@ -350,10 +278,10 @@
 
       // Update the color name display
       function updateColorName() {
-        if (slides.length === 0) return;
+        if (imageList.length === 0) return;
 
         const colorNameElement = document.getElementById("color-name");
-        colorNameElement.textContent = slides[currentSlideIndex].colorName;
+        colorNameElement.textContent = imageList[currentSlideIndex].colorName;
       }
 
       // Add keyboard navigation
@@ -365,8 +293,8 @@
         }
       });
 
-      // Load images when the page loads
-      window.addEventListener("DOMContentLoaded", loadImages);
+      // Initialize the carousel when the page loads
+      window.addEventListener("DOMContentLoaded", initializeCarousel);
     </script>
   </body>
 </html>
