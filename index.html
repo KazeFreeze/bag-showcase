@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Bag Color Showcase</title>
     <style>
+      :root {
+        --primary-color: #333;
+        --background-color: #f8f8f8;
+        --card-background: #fff;
+        --accent-color: #666;
+        --transition-speed: 0.4s;
+      }
+
       * {
         margin: 0;
         padding: 0;
@@ -12,37 +20,43 @@
       }
 
       body {
-        font-family: "Arial", sans-serif;
-        background-color: #f5f5f5;
-        color: #333;
+        font-family: "Helvetica Neue", Arial, sans-serif;
+        background-color: var(--background-color);
+        color: var(--primary-color);
         line-height: 1.6;
+        padding: 0 1rem;
       }
 
       .container {
-        max-width: 1000px;
-        margin: 0 auto;
-        padding: 20px;
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 1rem;
       }
 
       h1 {
         text-align: center;
-        margin: 20px 0 40px;
-        color: #333;
+        margin-bottom: 2rem;
+        font-weight: 300;
+        letter-spacing: 0.05em;
+        color: var(--primary-color);
+        font-size: clamp(1.5rem, 4vw, 2.5rem);
       }
 
       .carousel {
         position: relative;
         overflow: hidden;
         width: 100%;
-        border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        background: white;
+        border-radius: 12px;
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
+        background: var(--card-background);
+        aspect-ratio: 4/3;
+        max-height: 80vh;
       }
 
       .carousel-inner {
         position: relative;
         width: 100%;
-        height: 500px;
+        height: 100%;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -55,7 +69,7 @@
         width: 100%;
         height: 100%;
         opacity: 0;
-        transition: opacity 0.6s ease;
+        transition: opacity var(--transition-speed) ease;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -70,6 +84,7 @@
         max-width: 100%;
         max-height: 100%;
         object-fit: contain;
+        padding: 1rem;
       }
 
       .carousel-controls {
@@ -80,11 +95,12 @@
         width: 100%;
         z-index: 2;
         transform: translateY(-50%);
+        pointer-events: none;
       }
 
       .carousel-control {
-        background-color: rgba(0, 0, 0, 0.3);
-        color: white;
+        background-color: rgba(255, 255, 255, 0.8);
+        color: var(--primary-color);
         border: none;
         width: 40px;
         height: 40px;
@@ -94,12 +110,15 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        margin: 0 20px;
-        transition: background-color 0.3s;
+        margin: 0 1rem;
+        transition: all var(--transition-speed) ease;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        pointer-events: auto;
       }
 
       .carousel-control:hover {
-        background-color: rgba(0, 0, 0, 0.5);
+        background-color: #fff;
+        transform: scale(1.1);
       }
 
       .carousel-indicators {
@@ -113,31 +132,65 @@
       }
 
       .indicator {
-        width: 12px;
-        height: 12px;
+        width: 8px;
+        height: 8px;
         border-radius: 50%;
-        background-color: rgba(255, 255, 255, 0.5);
+        background-color: rgba(0, 0, 0, 0.3);
         cursor: pointer;
-        transition: background-color 0.3s;
+        transition: all var(--transition-speed) ease;
       }
 
       .indicator.active {
-        background-color: white;
-        transform: scale(1.2);
+        background-color: var(--primary-color);
+        transform: scale(1.3);
       }
 
       .color-name {
         position: absolute;
-        bottom: 60px;
+        bottom: 50px;
         width: 100%;
         text-align: center;
-        color: white;
-        font-size: 24px;
-        font-weight: bold;
-        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+        color: var(--primary-color);
+        font-size: clamp(1rem, 3vw, 1.25rem);
+        font-weight: 500;
         z-index: 2;
-        background-color: rgba(0, 0, 0, 0.4);
-        padding: 10px;
+        padding: 0.5rem;
+        letter-spacing: 0.05em;
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          padding: 0.5rem;
+          margin: 1rem auto;
+        }
+
+        .carousel {
+          border-radius: 8px;
+          aspect-ratio: 1/1;
+        }
+
+        .carousel-control {
+          width: 36px;
+          height: 36px;
+          margin: 0 0.5rem;
+        }
+
+        .color-name {
+          bottom: 40px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .carousel-control {
+          width: 32px;
+          height: 32px;
+          font-size: 14px;
+        }
+
+        .indicator {
+          width: 6px;
+          height: 6px;
+        }
       }
     </style>
   </head>
